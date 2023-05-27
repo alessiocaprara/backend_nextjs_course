@@ -5,7 +5,6 @@ import createHttpError from "http-errors";
 import mongoose from "mongoose";
 import sharp from "sharp";
 import * as Email from "../config/email-config";
-import redisClient from "../config/redis-config";
 import EmailVerificationToken from "../models/email-verification-token";
 import PasswordResetToken from "../models/password-reset-token";
 import UserModel from "../models/user";
@@ -136,19 +135,8 @@ export const resetPassword: RequestHandler<unknown, unknown, ResetPasswordBody, 
             await passwordResetToken.deleteOne();
         }
 
-        if (env.NODE_ENV === "production") {
-            let cursor = 0;
-            do {
-                const result = await redisClient.scan(cursor, { MATCH: `sess:${existingUser._id.toString()}*`, COUNT: 1000 });
-                for (const key of result.keys) {
-                    await redisClient.del(key);
-                }
-                cursor = result.cursor;
-            } while (cursor !== 0);
-        } else {
-            const regexp = new RegExp("^" + existingUser._id.toString());
-            mongoose.connection.db.collection("sessions").deleteMany({ _id: regexp });
-        }
+        const regexp = new RegExp("^" + existingUser._id.toString());
+        mongoose.connection.db.collection("sessions").deleteMany({ _id: regexp });
 
         const newPasswordHashed = await bcrypt.hash(newPasswordRaw, 10);
         existingUser.password = newPasswordHashed;

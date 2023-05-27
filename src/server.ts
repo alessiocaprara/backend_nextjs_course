@@ -7,6 +7,12 @@ dns.setDefaultResultOrder('ipv4first');
 
 const port = env.PORT;
 
+if (env.NODE_ENV === "production") {
+    console.log("Server running in production mode");
+} else {
+    console.log("Server running in development mode");
+}
+
 mongoose.connect(env.MONGO_CONNECTION_STRING)
     .then(() => {
         console.log("Mongoose connected");
@@ -15,7 +21,3 @@ mongoose.connect(env.MONGO_CONNECTION_STRING)
         });
     })
     .catch(console.error);
-
-/**
- * This file is double checked: ok (24_04_2023 19:20).
- */
