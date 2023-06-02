@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
 import app from "./app";
 import env from "./utils/validateEnv";
-import dns from "node:dns";
 
 dns.setDefaultResultOrder('ipv4first');
 

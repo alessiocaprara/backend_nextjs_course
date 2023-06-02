@@ -14,8 +14,9 @@ export async function sendEmailVerificationCode(toEmail: string, verificationCod
     await transporter.sendMail({
         from: "noreply@k-app.cloud",
         to: toEmail,
-        subject: "Your verification code",
-        html: `<p>This is your verification code. It will expires in 10 minutes</p><strong>${verificationCode}</strong>`,
+        subject: "K-app - Your verification code",
+        html: `<p>This is your verification code. It will expires in 10 minutes</p>
+        <strong>${verificationCode}</strong>`,
     });
 }
 
@@ -23,7 +24,7 @@ export async function sendPasswordResetCode(toEmail: string, verificationCode: s
     await transporter.sendMail({
         from: "noreply@k-app.cloud",
         to: toEmail,
-        subject: "Reset your password",
+        subject: "K-app - Reset your password",
         html: `<p>A password reset request has been sent for this account. 
         Use this verification code to reset your password. It will expire in 10 minutes.</p>
         <p><strong>${verificationCode}</strong></p>

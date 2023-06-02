@@ -14,12 +14,11 @@ router.get("/post/:slug", PostsController.getPostBySlug);
 router.post("/", requiresAuth, createPostsRateLimit, featuredImageUpload.single("featuredImage"), validateRequestSchema(createPostSchema), PostsController.createPost);
 router.patch("/:postId", requiresAuth, updatePostRateLimit, featuredImageUpload.single("featuredImage"), validateRequestSchema(updatePostSchema), PostsController.updatePost);
 router.delete("/:postId", requiresAuth, validateRequestSchema(deletePostSchema), PostsController.deletePost);
-
 router.post("/images", requiresAuth, updateImageRateLimit, inPostImageUpload.single("inPostImage"), validateRequestSchema(uploadInPostImageSchema), PostsController.uploadInPostImage);
 
 router.get("/:postId/comments", validateRequestSchema(getCommentsForPostSchema), PostsController.getCommentsForPost);
-router.post("/:postId/comments", requiresAuth, validateRequestSchema(createCommentSchema), PostsController.createComment);
 router.get("/comments/:commentId/replies", validateRequestSchema(getCommentRepliesSchema), PostsController.getCommentReplies);
+router.post("/:postId/comments", requiresAuth, validateRequestSchema(createCommentSchema), PostsController.createComment);
 router.patch("/comments/:commentId", requiresAuth, validateRequestSchema(updateCommentSchema), PostsController.updateComment);
 router.delete("/comments/:commentId", requiresAuth, validateRequestSchema(deleteCommentSchema), PostsController.deleteComment);
 

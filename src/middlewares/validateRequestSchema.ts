@@ -1,6 +1,6 @@
-import { Schema, ValidationError } from "yup";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
+import { Schema, ValidationError } from "yup";
 
 const validateRequestSchema = (schema: Schema): RequestHandler =>
     async (req, res, next) => {

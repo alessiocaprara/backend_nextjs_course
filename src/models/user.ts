@@ -1,5 +1,8 @@
 import { InferSchemaType, Schema, model } from "mongoose";
 
+// File check: 30/5/2023
+// Comment: OK but I think it could be optimized from the skratch
+
 const userSchema = new Schema({
     username: { type: String, unique: true, sparse: true },
     email: { type: String, unique: true, sparse: true, select: false },

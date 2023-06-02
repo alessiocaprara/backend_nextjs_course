@@ -135,7 +135,7 @@ export const resetPassword: RequestHandler<unknown, unknown, ResetPasswordBody, 
             await passwordResetToken.deleteOne();
         }
 
-        const regexp = new RegExp("^" + existingUser._id.toString());
+        const regexp = new RegExp("^" + existingUser._id.toString()); //"^" = starts with
         mongoose.connection.db.collection("sessions").deleteMany({ _id: regexp });
 
         const newPasswordHashed = await bcrypt.hash(newPasswordRaw, 10);

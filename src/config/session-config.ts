@@ -4,8 +4,12 @@ import { CookieOptions } from "express";
 import { SessionOptions } from "express-session";
 import env from "../utils/validateEnv";
 
+// File check: 30/5/2023
+// Comment: genid build a session id starting with authenticated user id.
+// is it possible to add a field in the document to serach for? 
+
 const cookieConfig: CookieOptions = {
-    maxAge: 12 * 60 * 60 * 1000, // cookie validity: 12 hour
+    maxAge: 60 * 60 * 1000, // cookie validity: 1 hour
 }
 
 if (env.NODE_ENV === "production") {

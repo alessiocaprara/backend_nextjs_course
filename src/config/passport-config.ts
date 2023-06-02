@@ -21,22 +21,14 @@ passport.use(new LocalStrategy(async (username, password, cb) => {
         const existingUser = await UserModel.findOne({ username: username })
             .select("+email +password")
             .exec();
-
-        if (!existingUser || !existingUser.password) {
-            return cb(null, false);
-        }
-
+        if (!existingUser || !existingUser.password) { return cb(null, false) }
         const passwordMatch = await bcrypt.compare(password, existingUser.password);
-
         if (!passwordMatch) {
             return cb(null, false);
         }
-
         const user = existingUser.toObject();
         delete user.password;
-
         return cb(null, user);
-
     } catch (error) {
         cb(error);
     }

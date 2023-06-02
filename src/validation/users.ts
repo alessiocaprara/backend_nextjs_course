@@ -27,32 +27,28 @@ const imageFileSchema = yup.mixed<Express.Multer.File>()
     );
 
 //------------------------------------------------------------------------- signUp
-const signUpBodySchema = yup.object({
-    username: usernameSchema.required(),
-    email: emailSchema.required(),
-    password: passwordSchema.required(),
-    verificationCode: yup.string().required(),
-});
-
-export type SignUpBody = yup.InferType<typeof signUpBodySchema>;
-
 export const signUpSchema = yup.object({
-    body: signUpBodySchema,
+    body: yup.object({
+        username: usernameSchema.required(),
+        email: emailSchema.required(),
+        password: passwordSchema.required(),
+        verificationCode: yup.string().required(),
+    }),
 });
+
+export type SignUpBody = yup.InferType<typeof signUpSchema>["body"];
 
 //------------------------------------------------------------------------- updateUser
-const updateUserBodySchema = yup.object({
-    username: usernameSchema,
-    displayName: yup.string().max(20),
-    about: yup.string().max(160),
-});
-
-export type UpdateUserBody = yup.InferType<typeof updateUserBodySchema>;
-
 export const updateUserSchema = yup.object({
-    body: updateUserBodySchema,
+    body: yup.object({
+        username: usernameSchema,
+        displayName: yup.string().max(20),
+        about: yup.string().max(160),
+    }),
     file: imageFileSchema,
 });
+
+export type UpdateUserBody = yup.InferType<typeof updateUserSchema>["body"];
 
 //------------------------------------------------------------------------- requestEmailVerificationCode
 export const requestEmailVerificationCodeSchema = yup.object({
@@ -73,14 +69,12 @@ export const requestResetPasswordCodeSchema = yup.object({
 export type RequestResetPasswordCodeBody = yup.InferType<typeof requestResetPasswordCodeSchema>["body"];
 
 //--------------------------------------------------------------------------- resetPassword
-const resetPasswordBodySchema = yup.object({
-    email: emailSchema.required(),
-    password: passwordSchema.required(),
-    verificationCode: yup.string().required(),
-});
-
-export type ResetPasswordBody = yup.InferType<typeof resetPasswordBodySchema>;
-
 export const resetPasswordSchema = yup.object({
-    body: resetPasswordBodySchema,
+    body: yup.object({
+        email: emailSchema.required(),
+        password: passwordSchema.required(),
+        verificationCode: yup.string().required(),
+    }),
 });
+
+export type ResetPasswordBody = yup.InferType<typeof resetPasswordSchema>["body"];

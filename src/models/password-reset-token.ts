@@ -1,5 +1,7 @@
 import { InferSchemaType, Schema, model } from "mongoose";
 
+// TODO: Should be defined a key <email, verificationCode>
+
 const passwordResetTokenSchema = new Schema({
     email: { type: String, required: true },
     verificationCode: { type: String, required: true },

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { validateBufferMIMEType } from "validate-image-type";
 import * as yup from "yup";
+import isPositiveInteger from "../utils/isPositiveInteger";
 
 //-------------------------------------------------------------------------- CUSTOM REUSABLE SCHEMAS
 const objectIdSchema = yup.string()
@@ -30,73 +31,59 @@ const pageSchema = yup.string()
         "the page number is not valid",
         async pageNum => {
             if (!pageNum) return true;
-            if (isNaN(+pageNum) || +pageNum <= 0) return false;
-            return true;
+            return isPositiveInteger(pageNum);
         }
     );
 
-const commentTextSchema = yup.string().required().max(600);
-
 //-----------------------------------------------------------------------------------------------POSTS
 //------------------------------------------------------------------- getPosts
-const getPostsQuerySchema = yup.object({
-    authorId: objectIdSchema,
-    page: pageSchema,
-});
-
-export type GetPostsQuery = yup.InferType<typeof getPostsQuerySchema>;
-
 export const getPostsSchema = yup.object({
-    query: getPostsQuerySchema,
+    query: yup.object({
+        authorId: objectIdSchema,
+        page: pageSchema,
+    }),
 });
+
+export type GetPostsQuery = yup.InferType<typeof getPostsSchema>["query"];
 
 //------------------------------------------------------------------- createPost
-const createPostBodySchema = yup.object({
-    title: yup.string().required().max(100),
-    slug: yup.string().required().max(100).matches(/^[a-zA-Z0-9_-]*$/),
-    summary: yup.string().required().max(300),
-    body: yup.string().required(),
-});
-
-export type CreatePostBody = yup.InferType<typeof createPostBodySchema>;
-
 export const createPostSchema = yup.object({
-    body: createPostBodySchema,
+    body: yup.object({
+        title: yup.string().required().max(100),
+        slug: yup.string().required().max(100).matches(/^[a-zA-Z0-9_-]*$/),
+        summary: yup.string().required().max(300),
+        body: yup.string().required(),
+    }),
     file: imageFileSchema.required("Featured image required"),
 });
 
+export type CreatePostBody = yup.InferType<typeof createPostSchema>["body"];
+
 //------------------------------------------------------------------- updatePost
-const updatePostBodySchema = yup.object({
-    title: yup.string().required().max(100),
-    slug: yup.string().required().max(100).matches(/^[a-zA-Z0-9_-]*$/),
-    summary: yup.string().required().max(300),
-    body: yup.string().required(),
-});
-
-const updatePostParamsSchema = yup.object({
-    postId: objectIdSchema.required(),
-});
-
-export type UpdatePostBody = yup.InferType<typeof updatePostBodySchema>;
-export type UpdatePostParams = yup.InferType<typeof updatePostParamsSchema>;
-
 export const updatePostSchema = yup.object({
-    params: updatePostParamsSchema,
-    body: updatePostBodySchema,
+    params: yup.object({
+        postId: objectIdSchema.required(),
+    }),
+    body: yup.object({
+        title: yup.string().required().max(100),
+        slug: yup.string().required().max(100).matches(/^[a-zA-Z0-9_-]*$/),
+        summary: yup.string().required().max(300),
+        body: yup.string().required(),
+    }),
     file: imageFileSchema,
 });
 
+export type UpdatePostParams = yup.InferType<typeof updatePostSchema>["params"];
+export type UpdatePostBody = yup.InferType<typeof updatePostSchema>["body"];
+
 //------------------------------------------------------------------- deletePost
-const deletePostParamsSchema = yup.object({
-    postId: objectIdSchema.required(),
-});
-
-export type DeletePostParams = yup.InferType<typeof deletePostParamsSchema>;
-
 export const deletePostSchema = yup.object({
-    params: deletePostParamsSchema,
+    params: yup.object({
+        postId: objectIdSchema.required(),
+    }),
 });
 
+export type DeletePostParams = yup.InferType<typeof deletePostSchema>["params"];
 
 //------------------------------------------------------------------- uploadInPostImage
 export const uploadInPostImageSchema = yup.object({
@@ -120,7 +107,7 @@ export type GetCommentsForPostQuery = yup.InferType<typeof getCommentsForPostSch
 //------------------------------------------------------------------- createComment
 export const createCommentSchema = yup.object({
     body: yup.object({
-        text: commentTextSchema,
+        text: yup.string().required().max(600),
         parentCommentId: objectIdSchema,
     }),
     params: yup.object({
@@ -147,7 +134,7 @@ export type GetCommentRepliesQuery = yup.InferType<typeof getCommentRepliesSchem
 //------------------------------------------------------------------- updateComment
 export const updateCommentSchema = yup.object({
     body: yup.object({
-        newText: commentTextSchema,
+        newText: yup.string().required().max(600),
     }),
     params: yup.object({
         commentId: objectIdSchema.required(),

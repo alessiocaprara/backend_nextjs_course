@@ -21,7 +21,7 @@ export const getPosts: RequestHandler<unknown, unknown, unknown, GetPostsQuery> 
     try {
         const getPostsQuery = PostModel
             .find(filter)
-            .sort({ _id: -1 })
+            .sort({ _id: -1 }) // latest first
             .skip((page - 1) * PAGE_SIZE)
             .limit(PAGE_SIZE)
             .populate("author")
@@ -128,7 +128,7 @@ export const updatePost: RequestHandler<UpdatePostParams, unknown, UpdatePostBod
             postToEdit.featuredImageUrl = env.SERVER_URL + featuredImageDestinationPath + "?lastupdated=" + Date.now();
         }
         await postToEdit.save();
-        await axios.get(env.WEBSITE_URL + `/api/revalidate-post/${slug}?secret=${env.POST_REVALIDATION_KEY}`)
+        await axios.get(env.WEBSITE_URL + `/api/revalidate-post/${slug}?secret=${env.POST_REVALIDATION_KEY}`); // What is this for?
         res.sendStatus(200);
     } catch (error) {
         next(error);
@@ -148,7 +148,7 @@ export const deletePost: RequestHandler<DeletePostParams, unknown, unknown, unkn
             fs.unlinkSync("." + imagePath);
         }
         await postToDelete.deleteOne();
-        await axios.get(env.WEBSITE_URL + `/api/revalidate-post/${postToDelete.slug}?secret=${env.POST_REVALIDATION_KEY}`)
+        await axios.get(env.WEBSITE_URL + `/api/revalidate-post/${postToDelete.slug}?secret=${env.POST_REVALIDATION_KEY}`);
         res.sendStatus(204);
     } catch (error) {
         next(error);
@@ -294,8 +294,6 @@ export const deleteComment: RequestHandler<DeleteCommentParams, unknown, unknown
     try {
         assertIsDefined(authenticatedUser);
         const commentToDelete = await CommentModel.findById(commentId).exec();
-        console.log(commentToDelete);
-
         if (!commentToDelete) {
             throw createHttpError(404, "Comment not found");
         }
